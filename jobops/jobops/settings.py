@@ -37,15 +37,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # DRF packages
     'rest_framework',
+    'rest_framework_simplejwt',
+    # apps
     'jobs',
 ]
 
+# modify from session based to JWT based 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# load custom user model
+AUTH_USER_MODEL = 'jobs.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
