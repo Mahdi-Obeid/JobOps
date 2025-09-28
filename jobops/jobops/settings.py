@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # DRF packages
     'rest_framework',
     'rest_framework_simplejwt',
+    "drf_spectacular",
     # apps
     'jobs',
 ]
@@ -49,6 +50,25 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'JobOps APIs',
+    'DESCRIPTION': 'Internal Operations Management System - Manage jobs, tasks, equipment, and technician workflows',
+    'VERSION': '1.0.0',
+
+    'CONTACT': {
+        'name': 'Mahdi Obeid',
+        'email': 'mahdiobeid8@gmail.com',
+    },
 }
 
 # load custom user model

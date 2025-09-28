@@ -13,14 +13,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="TECHNICIAN")
 
     # override inherited fields to make them REQUIRED
-    username = models.CharField(max_length=150, unique=True, blank=False)
-    email = models.EmailField(max_length=254, unique=True, blank=False)
-    first_name = models.CharField(max_length=150, blank=False)
-    last_name = models.CharField(max_length=150, blank=False)
-
-    # remove these fields because they conflict with 'role'
-    is_staff = None
-    is_superuser = None
+    REQUIRED_FIELDS = ["email", "first_name", "last_name"]
 
     # timestamp field
     updated_at = models.DateTimeField(auto_now=True)
