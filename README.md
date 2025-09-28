@@ -253,3 +253,15 @@ tech.save()
 - Comprehensive error handling with helpful messages
 - Role-appropriate data filtering
 - Professional OpenAPI documentation
+
+> [!NOTE]
+> ## Admin Analytics (optional feature)
+> available in _optional-features_ branch
+
+**Analytics includes:**
+- Total jobs and completion rates
+- Average job completion time
+- Most frequently used equipment
+- Job distribution by status and priority
+- Equipment usage statistics
+
