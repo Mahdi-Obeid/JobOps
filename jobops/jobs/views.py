@@ -6,10 +6,11 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from drf_spectacular.types import OpenApiTypes
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from .models import User, Job, JobTask, Equipment
+from .models import User, Job, JobTask, Equipment, JobTaskEquipment
 from .serializers import (UserSerializer, JobSerializer, JobTaskSerializer, 
-                         EquipmentSerializer)
+                         EquipmentSerializer, JobAnalyticsSerializer)
 from .permissions import (IsAdmin, IsAdminOrSalesAgent,  CanManageTasks)
+from django.db.models import Avg, Count
 
 
 @extend_schema(tags=['Users - Admin Only'])
@@ -367,3 +368,78 @@ class TechnicianJobUpdateView(APIView):
                 "client_name": job.client_name
             }
         })
+    
+
+@extend_schema(tags=["Admin Analytics (Optional Feature)"])
+class JobAnalyticsView(APIView):
+    """Admin-only endpoint for job analytics"""
+    permission_classes = [IsAdmin]
+    
+    @extend_schema(
+        description="Returns comprehensive analytics including average task completion time, most used equipment, and job statistics. Admin ONLY.",
+        responses={200: JobAnalyticsSerializer}
+    )
+    def get(self, request):
+        # Basic job statistics
+        total_jobs = Job.objects.count()
+        completed_jobs = Job.objects.filter(status='COMPLETED').count()
+        
+        # Calculate average completion time for completed jobs
+        completed_with_dates = Job.objects.filter(
+            status='COMPLETED', 
+            created_at__isnull=False,
+            updated_at__isnull=False
+        )
+        
+        avg_completion_days = 0
+        if completed_with_dates.exists():
+            total_days = sum([
+                (job.updated_at - job.created_at).days 
+                for job in completed_with_dates
+            ])
+            avg_completion_days = total_days / completed_with_dates.count()
+        
+        # Average tasks per job
+        avg_tasks = JobTask.objects.aggregate(
+            avg_tasks=Avg('job__jobtask__id')
+        )['avg_tasks'] or 0
+        
+        # Most used equipment
+        equipment_usage = JobTaskEquipment.objects.values(
+            'equipment__name', 'equipment__eq_type'
+        ).annotate(
+            usage_count=Count('id')
+        ).order_by('-usage_count')[:10]
+        
+        most_used_equipment = [
+            {
+                'name': item['equipment__name'],
+                'type': item['equipment__eq_type'],
+                'usage_count': item['usage_count']
+            }
+            for item in equipment_usage
+        ]
+        
+        # Jobs by status
+        status_counts = Job.objects.values('status').annotate(
+            count=Count('id')
+        )
+        jobs_by_status = {item['status']: item['count'] for item in status_counts}
+        
+        # Jobs by priority
+        priority_counts = Job.objects.values('priority').annotate(
+            count=Count('id')
+        )
+        jobs_by_priority = {item['priority']: item['count'] for item in priority_counts}
+        
+        analytics_data = {
+            'total_jobs': total_jobs,
+            'completed_jobs': completed_jobs,
+            'average_completion_days': round(avg_completion_days, 2),
+            'average_tasks_per_job': round(avg_tasks, 2),
+            'most_used_equipment': most_used_equipment,
+            'jobs_by_status': jobs_by_status,
+            'jobs_by_priority': jobs_by_priority
+        }
+        
+        return Response(analytics_data)

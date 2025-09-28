@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     UserViewSet, JobViewSet, JobTaskViewSet, EquipmentViewSet,
     TechnicianDashboardView, TechnicianTaskUpdateView, TechnicianJobUpdateView,
-    ProfileView
+    ProfileView, JobAnalyticsView
 )
 
 router = DefaultRouter()
@@ -22,4 +22,7 @@ urlpatterns = [
          TechnicianTaskUpdateView.as_view(), name="technician-task-update"),
     path("technician-dashboard/job/<int:job_id>/update-status/", 
          TechnicianJobUpdateView.as_view(), name="technician-job-update"),
+
+    # Admin Analytics Endpoints (ooptional feature)
+    path("admin/analytics/", JobAnalyticsView.as_view(), name="job-analytics"),
 ]
