@@ -132,3 +132,14 @@ class JobSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         validated_data["created_by"] = user
         return super().create(validated_data)
+    
+
+# optional feature
+class JobAnalyticsSerializer(serializers.Serializer):
+    total_jobs = serializers.IntegerField()
+    completed_jobs = serializers.IntegerField()
+    average_completion_days = serializers.FloatField()
+    average_tasks_per_job = serializers.FloatField()
+    most_used_equipment = serializers.ListField()
+    jobs_by_status = serializers.DictField()
+    jobs_by_priority = serializers.DictField()
