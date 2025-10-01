@@ -84,6 +84,9 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # boolean field for celery
+    overdue = models.BooleanField(default=False)
+
     class Meta:
         db_table = "job"
         indexes = [

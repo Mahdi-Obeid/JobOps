@@ -36,8 +36,8 @@ class UserViewSet(viewsets.ModelViewSet):
             OpenApiExample(
                 "Create Technician",
                 value={
-                    "username": "tech_user",
-                    "email": "technician@company.com",
+                    "username": "technician_",
+                    "email": "technician_@company.com",
                     "first_name": "Jane",
                     "last_name": "Tech",
                     "role": "TECHNICIAN",
@@ -47,8 +47,8 @@ class UserViewSet(viewsets.ModelViewSet):
             OpenApiExample(
                 "Create Sales Agent",
                 value={
-                    "username": "sales_user",
-                    "email": "sales@company.com",
+                    "username": "sales_agent_",
+                    "email": "sales_agent_@company.com",
                     "first_name": "Bob",
                     "last_name": "Sales",
                     "role": "SALES_AGENT",
@@ -91,7 +91,6 @@ class JobTaskViewSet(viewsets.ModelViewSet):
         return JobTask.objects.all()
 
     @extend_schema(
-        summary="create a new task",
         description="Create a new task for a job with optional equipment requirements.",
     )
     def create(self, request, *args, **kwargs):

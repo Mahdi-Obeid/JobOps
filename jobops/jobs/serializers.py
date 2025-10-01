@@ -124,9 +124,9 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = [
             "id", "title", "description", "client_name", "created_by", "assigned_to",
-            "status", "priority", "scheduled_date", "tasks"
+            "status", "priority", "scheduled_date", "overdue", "tasks"
         ]
-        read_only_fields = ["created_by"]
+        read_only_fields = ["created_by", "overdue"]
 
     def create(self, validated_data):
         user = self.context["request"].user
