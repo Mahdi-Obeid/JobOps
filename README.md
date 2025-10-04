@@ -184,6 +184,34 @@ py manage.py createsuperuser
 # http://localhost:8000/admin/
 ```
 
+## Background Tasks with Celery
+
+This project uses Celery for background task processing to automatically mark overdue jobs.
+
+### Prerequisites
+
+Install Redis (message broker):
+- **Windows**: Download from https://github.com/microsoftarchive/redis/releases or use WSL
+- **macOS**: `brew install redis`
+- **Linux**: `sudo apt-get install redis-server`
+
+### How to run celery
+
+#### 1. Run Django server (Terminal 1):
+```bash
+py manage.py runserver
+```
+
+#### 2. Run Celery worker (Terminal 2):
+```bash
+celery -A jobops worker --loglevel=info --pool=solo
+```
+
+#### 3. Run Celery beat scheduler (Terminal 3):
+```bash
+celery -A jobops beat --loglevel=info
+```
+---
 > [!IMPORTANT]
 >### Testing Users
 Create test users for each role:
